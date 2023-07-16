@@ -11,7 +11,7 @@ class PlanDao:
 
     def fetch_all(self, date) -> list:
         cursor = self.__db.cursor()
-        cursor.execute("SELECT id, for_day, id_horse, id_exercise, id_treatment FROM plan")
+        cursor.execute("SELECT id, for_day, id_horse, id_exercise, id_treatment FROM plan WHERE for_day = (%s)", (date,))
 
         db_results = cursor.fetchall()
         results = []
@@ -23,11 +23,23 @@ class PlanDao:
 
         return results
 
-    def create_plan(self, id, date, horse_id, exercise_id, treatment_id) -> int:
-        return 0
+    def create_plan(self, exercise_id, treatment_id, horse_id, date) -> int:
+        cursor = self.__db.cursor()
+        cursor.execute("INSERT INTO plan (for_day, id_horse, id_exercise, id_treatment) VALUES (%s, %s, %s, %s)", (date, horse_id, exercise_id, treatment_id))
 
-    def update_plan(self, id, what_to_update, new_value):
-        return None
+        self.__db.commit()
+        result = cursor.lastrowid
+        return result
 
-    def delete_plan(self, id):
-        return None
+    def update_plan(self, val_id, exercise_id, treatment_id):
+
+        cursor = self.__db.cursor()
+        cursor.execute("UPDATE plan SET id_exercise = %s, id_treatment = %s WHERE id = %s",
+                    (exercise_id, treatment_id, val_id))
+
+        self.__db.commit()
+
+    def delete_plan(self, val_id):
+        cursor = self.__db.cursor()
+        cursor.execute("DELETE FROM plan WHERE id = %s", (val_id,))
+        self.__db.commit()
