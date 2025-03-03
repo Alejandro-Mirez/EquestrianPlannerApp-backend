@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class CalendarItemRequest(BaseModel):
-    exercise_id: Optional[int]
-    treatment_id: Optional[int]
-    horse_id: int
-    date: datetime.date
+    id_activity: Optional[str]
+    id_horse: int
+    date: datetime.date # yyyy-mm-dd
+
